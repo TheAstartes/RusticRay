@@ -1,21 +1,50 @@
+use rt::HitRecord;
+use rt::Hittable;
 //use palette::encoding::srgb;
 use rt::Ray;
 use rt::Vec3;
 use palette::Srgb;
+use rt::Sphere;
 
 #[cfg(test)]
 use assert_approx_eq::assert_approx_eq;
 
 
 fn ray_color(ray: &Ray) -> Srgb {
-    let t: f32 = 0.5 * (ray.direction().unit_vector().y() as f32 + 1.0);
 
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0 ), 0.5);
+
+    
+    let hit = hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, ray);
+    
+    if hit > 0.0 {
+        let n = (ray.at(hit) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
+        return Srgb::new(0.5*n.x() as f32 + 0.7, 0.5*n.y() as f32 + 0.5, 0.5*n.z() as f32 + 0.5);
+    }
+    
+    let t: f32 = 0.5 * (ray.direction().unit_vector().y() as f32 + 1.0);
     Srgb::new
     (
-        (1.0 - t) * 1.0 + t * 0.1, 
-        (1.0 - t) * 1.0 + t * 0.8,
+        (1.0 - t) * 1.0 + t * 0.3, 
+        (1.0 - t) * 1.0 + t * 0.6,
         (1.0 - t) * 1.0 + t * 1.0,
     )
+}
+
+
+fn hit_sphere(center: Vec3, radius: f64, r: &Ray) -> f64 {
+    let oc = r.origin() - center;
+    let a = r.direction().dot(&r.direction());
+    let b = 2.0 * oc.dot(&r.direction());
+    let c = oc.dot(&oc) - radius * radius;
+
+    let discriminant = b*b - 4.0*a*c;
+
+    if discriminant < 0.0 {
+        return -1.0;
+    } else {
+        return (-b -discriminant.sqrt()) / (2.0 *a);
+    }
 }
 
 #[derive(Debug)]
@@ -38,19 +67,11 @@ impl Render{
         for y in 0..self.image_height {
             eprint!("\rScanlines remaining: {} ", self.image_height - y);
             for x in 0..self.image_width{
-                /*let r = x as f64 * inverse_width_minus_one;
-                let g = y as f64 * inverse_height_minus_one;
-                let b: f64 = 0.0;
-    
-                let ir = I * r;
-                let ig = I * g;
-                let ib = I * b;*/
-                //println!("{} {} {}", ir as u32, ig as u32, ib as u32);
             
                 let pixel_center = pixel00_loc + (pixel_delta_u * x as f64) + (pixel_delta_v * y as f64);
                 let ray_direction = pixel_center - camera_center;
 
-                let r = Ray::new(camera_center, ray_direction);
+                let r = Ray::new(camera_center,   ray_direction);
                 let color = ray_color(&r);    
 
                 

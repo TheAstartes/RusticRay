@@ -1,5 +1,6 @@
-use std::ops::{Add, Mul, Sub, Div};
-use std::cmp::PartialEq;
+use std::ops::{Add, Mul, Sub, Div, Neg};
+use std::cmp::{PartialEq, max};
+
 
 #[cfg(test)]
 use assert_approx_eq::assert_approx_eq;
@@ -38,6 +39,10 @@ impl Vec3 {
         (self.x().powi(2) + self.y().powi(2) + self.z().powi(2)).sqrt()
     }
 
+    pub fn length_squared(&self) -> f64 {
+        self.length().powi(2)
+    }
+
     pub fn cross(&self, vec3: &Vec3) -> Vec3 {
         Vec3 { 
             x: (self.y * vec3.z()) - (self.z * vec3.y()),
@@ -46,11 +51,27 @@ impl Vec3 {
         }
     }
 
-    //needs to be fixed
     pub fn unit_vector(self) -> Vec3{
         self / self.length()
     }
+
+    pub fn dot(&self, point: &Vec3) -> f64{
+        self.x * point.x() + self.y * point.y() + self.z * point.z()
+    }
     
+}
+
+impl Neg for Vec3
+{
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
 }
 
 impl Add<Vec3> for Vec3
@@ -159,6 +180,12 @@ impl PartialEq for Vec3{
     }
 }
 
+impl Default for Vec3{
+    fn default() -> Self {
+        Vec3 { x: 0.0, y: 0.0, z: 0.0 }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Ray {
     origin: Vec3,
@@ -183,6 +210,9 @@ impl Ray{
         self.direction.clone()
     }
 }
+
+
+
 
 #[test]
 fn test_new_vecotr(){
@@ -330,4 +360,91 @@ fn test_ray_at(){
     assert_approx_eq!(new_origin.x(), 4.0);
     assert_approx_eq!(new_origin.y(), 8.0);
     assert_approx_eq!(new_origin.z(), 12.0);
+}
+
+//---------------------------------------------------------------------------//
+
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        HitRecord { point: Vec3::default(), t: 0.0, normal: Vec3::default(), front_face: true}
+    }
+}
+
+pub struct HitRecord{
+    pub t: f64,
+    pub point: Vec3,
+    pub normal: Vec3,
+    pub front_face: bool,
+}
+
+impl HitRecord{
+    pub fn new(t: f64, point: Vec3, normal: Vec3, front_face: bool) -> HitRecord {
+        HitRecord {
+            t,
+            point,
+            normal,
+            front_face
+        }
+    }
+}
+
+pub trait Hittable{
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+} 
+
+pub struct Sphere{
+    center: Vec3,
+    radius: f64,
+}
+
+impl Sphere{
+    pub fn new(center: Vec3, radius: f64) -> Sphere {
+        Sphere {
+            center,
+            radius,
+        }
+    }
+}
+
+impl Hittable for Sphere{
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let oc = ray.origin - self.center;
+        let a = ray.direction.length_squared();
+        let half_b = oc.dot(&ray.direction);
+        let c = oc.length_squared() - self.radius * self.radius;
+        let discriminant = half_b * half_b - a * c;
+
+        if discriminant > 0.0 {
+            let root = discriminant.sqrt();
+
+            let temp = (-half_b - root) / a;
+
+            if temp < t_max && temp > t_min {
+
+                let p = ray.at(temp);
+                let normal = (p - self.center) / self.radius;
+                let front_face = ray.direction().dot(&normal) < 0.0;
+
+                return Some(HitRecord {
+                    t: temp,
+                    point: p,
+                    normal: if front_face {normal } else { -normal},
+                    front_face
+                })
+            }
+        }
+
+        None
+    }
+}
+
+#[test]
+fn test_hit(){
+    let center = Vec3:: new(0.0, 0.0, 0.0);
+    let sphere = Sphere::new(center, 1.0);
+
+    let ray = Ray::new(Vec3::new(0.0, 0.0, -5.0), Vec3::new(0.0, 0.0, 1.0));
+    let hit = sphere.hit(&ray, 0.0, f64::INFINITY);
+    assert_approx_eq!(hit.unwrap().t, 4.0);
 }
