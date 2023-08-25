@@ -1,9 +1,11 @@
 use std::ops::{Add, Mul, Sub, Div, Neg};
 use std::cmp::{PartialEq, max};
+use palette::Srgb;
 
+use rand::{Rng, rngs::ThreadRng};
 
-#[cfg(test)]
-use assert_approx_eq::assert_approx_eq;
+mod test;
+
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
@@ -212,159 +214,6 @@ impl Ray{
 }
 
 
-
-
-#[test]
-fn test_new_vecotr(){
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-
-    assert_approx_eq!(test_vec.x(), 0.11);
-    assert_approx_eq!(test_vec.y(), 0.22);
-    assert_approx_eq!(test_vec.z(), 0.33);
-
-    let test_vec2 = Vec3::new(0.11, 0.22, 0.33);
-
-    assert_approx_eq!(test_vec2.x(), test_vec.x());
-    assert_approx_eq!(test_vec2.y(), test_vec.y());
-    assert_approx_eq!(test_vec2.z(), test_vec.z());
-}
-
-#[test]
-fn test_add_vector(){
-
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(0.12, 0.23, 0.34);
-
-    let addition_vector = test_vec + test_vec2;
-
-    assert_approx_eq!(addition_vector.x(), 0.23);
-    assert_approx_eq!(addition_vector.y(), 0.45);
-    assert_approx_eq!(addition_vector.z(), 0.67);
-}
-
-#[test]
-fn test_sub_vector(){
-
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(0.12, 0.23, 0.34);
-
-    let sub_vector = test_vec2 - test_vec;
-
-    assert_approx_eq!(sub_vector.x(), 0.01);
-    assert_approx_eq!(sub_vector.y(), 0.01);
-    assert_approx_eq!(sub_vector.z(), 0.01);
-}
-
-#[test]
-fn test_mul_vector(){
-
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(2.0, 3.0, 4.0);
-
-    let mul_vector = test_vec2 * test_vec;
-
-    assert_approx_eq!(mul_vector.x(), 0.22);
-    assert_approx_eq!(mul_vector.y(), 0.66);
-    assert_approx_eq!(mul_vector.z(), 1.32);
-}
-
-#[test]
-fn test_mul_vector_by_num(){
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-
-    let mul_vector = test_vec * 2.0;
-
-    assert_approx_eq!(mul_vector.x(), 0.22);
-    assert_approx_eq!(mul_vector.y(), 0.44);
-    assert_approx_eq!(mul_vector.z(), 0.66);
-
-}
-
-#[test]
-fn test_div_vector(){
-
-    let test_vec = Vec3{x:0.22, y:0.66, z:0.88};
-    let test_vec2 = Vec3::new(1.0, 3.0, 4.0);
-
-    let div_vector = test_vec / test_vec2;
-    let div_vector_by_num = test_vec / 2.0;
-
-
-    assert_approx_eq!(div_vector.x(), 0.22);
-    assert_approx_eq!(div_vector.y(), 0.22);
-    assert_approx_eq!(div_vector.z(), 0.22);
-    assert_approx_eq!(div_vector_by_num.x(), 0.11);
-    assert_approx_eq!(div_vector_by_num.y(), 0.33);
-    assert_approx_eq!(div_vector_by_num.z(), 0.44);
-}
-
-#[test]
-fn test_vector_length(){
-    
-    let test_vec = Vec3::new(1.0, -2.0, 3.0 );
-    let test_vec2 = Vec3::new(1.0, -2.0, 3.0 );
-
-    let test_vec_length = test_vec.length();
-    let test_vec_length2 = test_vec2.length();
-
-
-    assert_approx_eq!(test_vec_length, 3.31662479036, 1f64);
-    assert_approx_eq!(test_vec_length, test_vec_length2);
-
-    println!("Value of vector test length ----> {}", test_vec_length);
-}
-
-#[test]
-fn test_vector_cross(){
-
-    let test_vec = Vec3::new(2.0, 4.0, 6.0);
-    let test_vec2 = Vec3::new(3.0, 2.0, 1.0);
-
-    let coross_vector = test_vec.cross(&test_vec2);
-
-    assert_approx_eq!(coross_vector.x(), -8.0);
-    assert_approx_eq!(coross_vector.y(), 16.0);
-    assert_approx_eq!(coross_vector.z(), -8.0);
-}
-
-#[test]
-fn test_unit_vecotr(){
-
-    let test_vec = Vec3::new(2.0, 4.0, 6.0);
-
-    let unit_vector = test_vec.unit_vector();
-
-    assert_approx_eq!(unit_vector.x(), 0.26726124191);
-    //assert_approx_eq!(unit_vector.y(), 0.53452248382);
-    //assert_approx_eq!(unit_vector.z(), 0.80178372573);
-
-}
-
-#[test]
-fn test_new_ray(){
-    let test_ray = Ray::new(
-    Vec3::new(2.0, 4.0, 6.0),
-    Vec3::new(1.0, 2.0, 3.0));
-
-    assert_approx_eq!(test_ray.origin().x(), 2.0);
-}
-
-#[test]
-fn test_ray_at(){
-    let test_ray = Ray::new(
-    Vec3::new(2.0, 4.0, 6.0),
-    Vec3::new(1.0, 2.0, 3.0));
-
-    let new_origin = test_ray.at(2.0);
-
-    assert_approx_eq!(new_origin.x(), 4.0);
-    assert_approx_eq!(new_origin.y(), 8.0);
-    assert_approx_eq!(new_origin.z(), 12.0);
-}
-
-//---------------------------------------------------------------------------//
-
-
 impl Default for HitRecord {
     fn default() -> Self {
         HitRecord { point: Vec3::default(), t: 0.0, normal: Vec3::default(), front_face: true}
@@ -439,12 +288,198 @@ impl Hittable for Sphere{
     }
 }
 
-#[test]
-fn test_hit(){
-    let center = Vec3:: new(0.0, 0.0, 0.0);
-    let sphere = Sphere::new(center, 1.0);
-
-    let ray = Ray::new(Vec3::new(0.0, 0.0, -5.0), Vec3::new(0.0, 0.0, 1.0));
-    let hit = sphere.hit(&ray, 0.0, f64::INFINITY);
-    assert_approx_eq!(hit.unwrap().t, 4.0);
+#[derive(Debug)]
+pub struct Camera{
+    pub image_width: i32,
+    pub image_height: i32,
+    pub pixel00_loc: Vec3,
+    pub camera_center: Vec3,
+    pub pixel_vec_u: Vec3,
+    pub pixel_vec_v: Vec3
 }
+
+impl Camera{
+    pub fn new(image_width: i32) -> Camera{
+
+        //Image
+        const ASPECT_RATIO: f64 = 16.0/9.0;
+
+        // Calculate the image height, and ensure that it's at least 1.
+        let mut image_height =  image_width / ASPECT_RATIO as i32;
+        
+        image_height =  match image_height {
+            0..=1 => 1,
+            _ => image_height,
+        };
+        
+        // Camera
+        let focal_length = 1.0;
+        let viewport_height = 2.0;
+        let viewport_width = viewport_height * (image_height / image_width) as f64;
+        let camera_center = Vec3::new(0.0, 0.0, 0.0);
+
+        // Vectors for horizontal and vertical lines
+        let vecotr_u = Vec3::new(viewport_width, 0.0, 0.0);
+        let vector_v = Vec3::new(0.0, -viewport_height, 0.0);
+
+        // Delta vectors for pixels
+        let pixel_vec_u = vecotr_u / image_width as f64;
+        let pixel_vec_v = vector_v / image_height as f64;
+
+        // Calculate location of the upper left pixel
+        let viewpoert_upper_left = camera_center - Vec3::new(0.0, 0.0, focal_length) - (vecotr_u/2.0) - (vector_v/2.0);
+        let mut pixel00_loc = (pixel_vec_u + pixel_vec_v) * 0.5;
+        pixel00_loc = pixel00_loc + viewpoert_upper_left;
+
+        Camera { 
+            image_width,
+            image_height,
+            pixel00_loc,
+            pixel_vec_u,
+            pixel_vec_v,
+            camera_center
+        }
+    }
+}
+
+fn hit_world(world: &Vec<Sphere>, ray: &Ray, intensity: Interval) -> Option<HitRecord> {
+    let mut closest = intensity.max;
+
+    let mut hit_record = None;
+
+    for sphere in world {
+        if let Some(hit) = sphere.hit(ray, intensity.min, closest) {
+            closest = hit.t;
+            hit_record = Some(hit);
+        }
+    }
+
+    hit_record
+}
+
+fn ray_color(ray: &Ray, intensity: Interval, world: &Vec<Sphere>) -> Srgb {
+    
+    let hit = hit_world(world, ray, intensity);
+    
+    match hit{
+        Some(HitRecord) => {
+            let normal = (ray.at(HitRecord.t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
+
+            return Srgb::new(
+                (0.5 * normal.x() as f32 + 0.5) *0.8,
+                (0.5 * normal.y() as f32 + 0.5) * 0.3,
+                (0.5 * normal.z() as f32 + 0.5) *1.0,
+            )
+        }
+        None => {
+            let t: f32 = 0.5 * (ray.direction().unit_vector().y() as f32 + 1.0);
+
+            return Srgb::new(
+                (1.0 - t) * 1.0 + t * 0.5,
+                (1.0 - t) * 1.0 + t * 0.7,
+                (1.0 - t) * 1.0 + t * 1.0,
+            );
+        }
+    }
+
+
+}
+
+#[derive(Debug)]
+pub struct Render {}
+
+impl Render{
+
+    pub fn render(pixel00_loc: Vec3, pixel_delta_u: Vec3, pixel_delta_v: Vec3, camera_center: Vec3,
+                image_width: i32, image_height: i32
+    ){
+        static I: f64 = 255.999;
+
+        let intensity = Interval::new(0.001, std::f64::MAX);
+
+        println!("P3");
+        println!("{} {}", image_height, image_width);
+        println!("{}", image_height-1);
+
+        let samples_per_pixel = 32;
+        let mut random: ThreadRng = rand::thread_rng();
+
+
+        let mut world: Vec<Sphere> = Vec::new();
+
+        world.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
+        world.push(Sphere::new(Vec3::new(0.0, -100.5, -2.0), 100.0));
+
+        for y in 0..image_height {
+            eprint!("\rScanlines remaining: {} ", image_height - y);
+            for x in 0..image_width{
+
+            let mut color = Srgb::new(0.0, 0.0, 0.0);
+            for _z in 0..samples_per_pixel{
+
+                let pixel_center = pixel00_loc + (pixel_delta_u * x as f64 /*+ random.gen::<f64>()*/) + (pixel_delta_v * y as f64 /*+ random.gen::<f64>()*/);
+                let pixel_sample = pixel_center + Render::pixel_sample_square(random.gen::<f64>(), pixel_delta_u, pixel_delta_v);
+
+                let ray_direction = pixel_sample - camera_center;
+
+                let r = Ray::new(camera_center,   ray_direction);
+                color = color + ray_color(&r, intensity, &world);    
+
+               }
+               // new func for Interval -> line too long 
+               println!("{} {} {}", (intensity.sample(color.red, samples_per_pixel) * I) as i32, (intensity.sample(color.green, samples_per_pixel)* I) as i32, (intensity.sample(color.blue, samples_per_pixel)* I) as i32);
+
+            }
+        }
+
+
+        eprint!("\nDone                    \n")
+    }
+
+    fn pixel_sample_square(rng: f64, pixel_delta_u: Vec3, pixel_delta_v: Vec3) -> Vec3 {
+
+        let px = -0.5 + rng;
+        let py = -0.5 + rng;
+
+        (pixel_delta_u * px) + (pixel_delta_v * py)
+    }  
+
+}
+
+
+#[derive(Debug, Clone, Copy)]
+struct Interval{
+    min: f64,
+    max: f64
+}
+
+impl Interval{
+    fn new(min: f64, max: f64) -> Interval{
+        Interval { min, max }
+    }
+
+    fn contains(&self, x: f64) -> bool {
+        self.min <= x && x <= self.max
+    }
+
+    fn surrounds(&self, x: f64) -> bool{
+        self.min < x && x < self.max
+    }
+
+    fn clamp(&self, x: f32) -> f64 {
+        if self.min > x as f64 {return self.min}
+        if self.max < x as f64 {return self.max}
+    
+        x as f64
+    }
+
+    fn sample(&self,color: f32, pixels_per_sample: i32) -> f64 {
+
+        let scale = 1.0 / pixels_per_sample as f32;
+
+        let new_color = color * scale;
+
+        self.clamp(new_color)
+    }
+}
+
