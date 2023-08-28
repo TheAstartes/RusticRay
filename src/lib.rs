@@ -61,6 +61,52 @@ impl Vec3 {
         self.x * point.x() + self.y * point.y() + self.z * point.z()
     }
     
+    fn random_vec3() -> Vec3 {
+        let mut random = rand::thread_rng();
+
+        Vec3 { 
+            x: random.gen::<f64>(),
+            y: random.gen::<f64>(),
+            z: random.gen::<f64>() 
+        }
+    }
+
+    fn random_vec3_minmax(min: f64, max: f64) -> Vec3 {
+        let mut random = rand::thread_rng();
+
+        Vec3 { 
+            x: random.gen_range(min..max),
+            y: random.gen_range(min..max),
+            z: random.gen_range(min..max),
+        }
+    }
+
+    fn random_vec3_unit_sphere() -> Vec3 {
+        loop  {
+            let vector = Vec3::random_vec3_minmax(-1.0, 1.0);
+
+            if vector.length_squared() < 1.0 {
+                return vector
+            }
+        }
+    }
+
+    fn random_unit_vec3() -> Vec3 {
+        Vec3::random_vec3_unit_sphere().unit_vector()
+    }
+
+    fn random_vec3_on_hemisphere(normal: &Vec3) -> Vec3 {
+
+        let unit_sphere_vec3 = Vec3::random_unit_vec3();
+
+        //Check if unit vector is in the same hempisphere as sphere normal
+        if unit_sphere_vec3.dot(normal) > 0.0 {
+            unit_sphere_vec3
+        }else {
+            unit_sphere_vec3 *  -1.0
+        }
+    }
+
 }
 
 impl Neg for Vec3
@@ -363,12 +409,24 @@ fn ray_color(ray: &Ray, intensity: Interval, world: &Vec<Sphere>) -> Srgb {
     
     match hit{
         Some(HitRecord) => {
-            let normal = (ray.at(HitRecord.t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
+            // let normal = (ray.at(HitRecord.t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
+
+            // return Srgb::new(
+            //     (0.5 * normal.x() as f32 + 0.5) *0.8,
+            //     (0.5 * normal.y() as f32 + 0.5) * 0.3,
+            //     (0.5 * normal.z() as f32 + 0.5) *1.0,
+            // )
+
+            let target_ray = HitRecord.point + HitRecord.normal + Vec3::random_vec3_on_hemisphere(&HitRecord.normal);
+
+            let target_color = ray_color(&Ray::new(HitRecord.point, 
+                target_ray - HitRecord.point), intensity, world);
 
             return Srgb::new(
-                (0.5 * normal.x() as f32 + 0.5) *0.8,
-                (0.5 * normal.y() as f32 + 0.5) * 0.3,
-                (0.5 * normal.z() as f32 + 0.5) *1.0,
+                0.5 * target_color.red,
+                0.5 * target_color.green,
+                0.5 * target_color.blue,
+                
             )
         }
         None => {
