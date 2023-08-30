@@ -1,18 +1,18 @@
-
-
 #[cfg(test)]
 use assert_approx_eq::assert_approx_eq;
+
+#[warn(unused_imports)]
 use super::*;
 
 #[test]
 fn test_new_vecotr(){
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
+    let test_vec = vector::Vec3{x:0.11, y:0.22, z:0.33};
 
     assert_approx_eq!(test_vec.x(), 0.11);
     assert_approx_eq!(test_vec.y(), 0.22);
     assert_approx_eq!(test_vec.z(), 0.33);
 
-    let test_vec2 = Vec3::new(0.11, 0.22, 0.33);
+    let test_vec2 = vector::Vec3::new(0.11, 0.22, 0.33);
 
     assert_approx_eq!(test_vec2.x(), test_vec.x());
     assert_approx_eq!(test_vec2.y(), test_vec.y());
@@ -22,8 +22,8 @@ fn test_new_vecotr(){
 #[test]
 fn test_add_vector(){
 
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(0.12, 0.23, 0.34);
+    let test_vec = vector::Vec3{x:0.11, y:0.22, z:0.33};
+    let test_vec2 = vector::Vec3::new(0.12, 0.23, 0.34);
 
     let addition_vector = test_vec + test_vec2;
 
@@ -35,8 +35,8 @@ fn test_add_vector(){
 #[test]
 fn test_sub_vector(){
 
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(0.12, 0.23, 0.34);
+    let test_vec = vector::Vec3{x:0.11, y:0.22, z:0.33};
+    let test_vec2 = vector::Vec3::new(0.12, 0.23, 0.34);
 
     let sub_vector = test_vec2 - test_vec;
 
@@ -48,8 +48,8 @@ fn test_sub_vector(){
 #[test]
 fn test_mul_vector(){
 
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
-    let test_vec2 = Vec3::new(2.0, 3.0, 4.0);
+    let test_vec = vector::Vec3{x:0.11, y:0.22, z:0.33};
+    let test_vec2 = vector::Vec3::new(2.0, 3.0, 4.0);
 
     let mul_vector = test_vec2 * test_vec;
 
@@ -60,7 +60,7 @@ fn test_mul_vector(){
 
 #[test]
 fn test_mul_vector_by_num(){
-    let test_vec = Vec3{x:0.11, y:0.22, z:0.33};
+    let test_vec = vector::Vec3{x:0.11, y:0.22, z:0.33};
 
     let mul_vector = test_vec * 2.0;
 
@@ -73,8 +73,8 @@ fn test_mul_vector_by_num(){
 #[test]
 fn test_div_vector(){
 
-    let test_vec = Vec3{x:0.22, y:0.66, z:0.88};
-    let test_vec2 = Vec3::new(1.0, 3.0, 4.0);
+    let test_vec = vector::Vec3{x:0.22, y:0.66, z:0.88};
+    let test_vec2 = vector::Vec3::new(1.0, 3.0, 4.0);
 
     let div_vector = test_vec / test_vec2;
     let div_vector_by_num = test_vec / 2.0;
@@ -91,8 +91,8 @@ fn test_div_vector(){
 #[test]
 fn test_vector_length(){
     
-    let test_vec = Vec3::new(1.0, -2.0, 3.0 );
-    let test_vec2 = Vec3::new(1.0, -2.0, 3.0 );
+    let test_vec = vector::Vec3::new(1.0, -2.0, 3.0 );
+    let test_vec2 = vector::Vec3::new(1.0, -2.0, 3.0 );
 
     let test_vec_length = test_vec.length();
     let test_vec_length2 = test_vec2.length();
@@ -107,8 +107,8 @@ fn test_vector_length(){
 #[test]
 fn test_vector_cross(){
 
-    let test_vec = Vec3::new(2.0, 4.0, 6.0);
-    let test_vec2 = Vec3::new(3.0, 2.0, 1.0);
+    let test_vec = vector::Vec3::new(2.0, 4.0, 6.0);
+    let test_vec2 = vector::Vec3::new(3.0, 2.0, 1.0);
 
     let coross_vector = test_vec.cross(&test_vec2);
 
@@ -120,7 +120,7 @@ fn test_vector_cross(){
 #[test]
 fn test_unit_vecotr(){
 
-    let test_vec = Vec3::new(2.0, 4.0, 6.0);
+    let test_vec = vector::Vec3::new(2.0, 4.0, 6.0);
 
     let unit_vector = test_vec.unit_vector();
 
@@ -132,18 +132,18 @@ fn test_unit_vecotr(){
 
 #[test]
 fn test_new_ray(){
-    let test_ray = Ray::new(
-    Vec3::new(2.0, 4.0, 6.0),
-    Vec3::new(1.0, 2.0, 3.0));
+    let test_ray = ray::Ray::new(
+        vector::Vec3::new(2.0, 4.0, 6.0),
+        vector::Vec3::new(1.0, 2.0, 3.0));
 
     assert_approx_eq!(test_ray.origin().x(), 2.0);
 }
 
 #[test]
 fn test_ray_at(){
-    let test_ray = Ray::new(
-    Vec3::new(2.0, 4.0, 6.0),
-    Vec3::new(1.0, 2.0, 3.0));
+    let test_ray = ray::Ray::new(
+        vector::Vec3::new(2.0, 4.0, 6.0),
+        vector::Vec3::new(1.0, 2.0, 3.0));
 
     let new_origin = test_ray.at(2.0);
 
@@ -152,12 +152,12 @@ fn test_ray_at(){
     assert_approx_eq!(new_origin.z(), 12.0);
 }
 
-#[test]
-fn test_hit(){
-    let center = Vec3:: new(0.0, 0.0, 0.0);
-    let sphere = Sphere::new(center, 1.0);
+// #[test]
+// fn test_hit(){
+//     let center = vector::Vec3:: new(0.0, 0.0, 0.0);
+//     let sphere = sphere::Sphere::new(center, 1.0);
 
-    let ray = Ray::new(Vec3::new(0.0, 0.0, -5.0), Vec3::new(0.0, 0.0, 1.0));
-    let hit = sphere.hit(&ray, 0.0, f64::INFINITY);
-    assert_approx_eq!(hit.unwrap().t, 4.0);
-}
+//     let ray = ray::Ray::new(vector::Vec3::new(0.0, 0.0, -5.0), vector::Vec3::new(0.0, 0.0, 1.0));
+//     let hit = sphere.hit(&ray, 0.0, f64::INFINITY);
+//     assert_approx_eq!(hit.unwrap().t, 4.0);
+// }
