@@ -106,7 +106,6 @@ impl Vec3 {
     pub fn near_zero(&self) -> bool {
         self.x.abs() < f64::EPSILON && self.y.abs() < f64::EPSILON && self.z.abs() < f64::EPSILON
     }
-
 }
 
 impl Neg for Vec3

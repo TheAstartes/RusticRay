@@ -11,13 +11,11 @@ pub struct Sphere{
 }
 
 impl Sphere{
-    pub fn new(center: vector::Vec3, radius: f64) -> Sphere {
+    pub fn new(center: vector::Vec3, radius: f64, material: Material) -> Sphere {
         Sphere {
             center,
             radius,
-            material: Material::Lambertian(Lambertian::new(Srgb::new(
-                0.5 as f32, 0.5 as f32, 0.5 as f32,
-            ))),
+            material,
         }
     }
 }

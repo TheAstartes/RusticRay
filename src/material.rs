@@ -60,6 +60,12 @@ pub struct Metal {
     albedo: Srgb,
 }
 
+impl Metal {
+    pub fn new( albedo: Srgb) -> Metal {
+        Metal { albedo }
+    }
+}
+
 impl Default for Metal{
     fn default() -> Self {
         Metal { albedo: Srgb::new(0.0, 0.0, 0.0) }
