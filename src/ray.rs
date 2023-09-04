@@ -1,6 +1,7 @@
 use crate::{vector, interval,sphere::Sphere, hit_record, material::Scatterable};
 use palette::Srgb;
 
+
 #[derive(Debug, Clone, Copy)]
 pub struct Ray {
     pub origin: vector::Vec3,

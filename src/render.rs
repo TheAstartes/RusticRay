@@ -24,13 +24,18 @@ impl Render{
 
 
         //Materials
-        let metal_sphere = material::Material::Metallic(Metal::new(Srgb::new(0.5, 0.5, 0.5)));
+        let metal_sphere = material::Material::Metallic(Metal::new(Srgb::new(0.5, 0.5, 0.5), 0.0));
+        let fuzz_metal_sphere = material::Material::Metallic(Metal::new(Srgb::new(0.5, 0.0, 0.9), 0.3));
         let normal_sphere = material::Material::Lambertian(Lambertian::new(Srgb::new(0.5, 0.5, 0.5)));
+        let glass_sphere = material::Material::Glass(Glass::new(3.0));
 
         //Spheres
-        world.push(Sphere::new(vector::Vec3::new(0.0, 0.0, -1.0), 0.5, normal_sphere));
-        world.push(Sphere::new(vector::Vec3::new(0.0, -100.5, -2.0), 100.0, normal_sphere));
-        world.push(Sphere::new(vector::Vec3::new(1.0, 0.0, -1.3), 0.5, metal_sphere));
+        world.push(Sphere::new(vector::Vec3::new(0.0, 0.0, -2.0), 0.5, normal_sphere));
+        world.push(Sphere::new(vector::Vec3::new(0.0, -100.5, -3.0), 100.0, normal_sphere));
+        world.push(Sphere::new(vector::Vec3::new(1.0, 0.0, -2.3), 0.5, metal_sphere));
+        world.push(Sphere::new(vector::Vec3::new(0.7, -0.3, -1.4), 0.2, fuzz_metal_sphere));
+        world.push(Sphere::new(vector::Vec3::new(-0.7, -0.3, -1.4), 0.2, glass_sphere));
+
 
         for y in 0..camera.image_height {
             eprint!("\rScanlines remaining: {} ", camera.image_height - y);
